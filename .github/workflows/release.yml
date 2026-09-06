@@ -25,9 +25,9 @@ jobs:
         run: |
           mkdir -p assets
           curl -fsSL https://arofi.net/brand-assets/arofi-app-icon.png -o assets/arofi_app_icon.png
-      - name: Generate Android platform and branding
+      - name: Generate Android and iOS platform shells and branding
         run: |
-          flutter create . --platforms=android --project-name arofi_support --org com.arosoftlabs
+          flutter create . --platforms=android,ios --project-name arofi_support --org com.arosoftlabs
           python3 tool/configure_platforms.py
           flutter pub get
           dart run flutter_launcher_icons
@@ -60,9 +60,9 @@ jobs:
         run: |
           mkdir -p assets
           curl -fsSL https://arofi.net/brand-assets/arofi-app-icon.png -o assets/arofi_app_icon.png
-      - name: Generate iOS project and branding
+      - name: Generate Android and iOS platform shells and branding
         run: |
-          flutter create . --platforms=ios --project-name arofi_support --org com.arosoftlabs
+          flutter create . --platforms=android,ios --project-name arofi_support --org com.arosoftlabs
           python3 tool/configure_platforms.py
           flutter pub get
           dart run flutter_launcher_icons
