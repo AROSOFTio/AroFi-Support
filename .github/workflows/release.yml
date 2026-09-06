@@ -1,0 +1,100 @@
+name: Build and release AroFi Support
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: arofi-support-release
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate Android platform and branding
+        run: |
+          flutter create . --platforms=android --project-name arofi_support --org com.arosoftlabs
+          python3 tool/configure_platforms.py
+          flutter pub get
+          dart run flutter_launcher_icons
+      - name: Verify
+        run: |
+          flutter analyze
+          flutter test
+      - name: Build Android APK and AAB
+        run: |
+          flutter build apk --release
+          flutter build appbundle --release
+          mkdir -p release
+          cp build/app/outputs/flutter-apk/app-release.apk release/AroFi-Support-Android-v1.0.0.apk
+          cp build/app/outputs/bundle/release/app-release.aab release/AroFi-Support-PlayStore-v1.0.0.aab
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-release
+          path: release/*
+
+  ios:
+    runs-on: macos-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate iOS project and branding
+        run: |
+          flutter create . --platforms=ios --project-name arofi_support --org com.arosoftlabs
+          python3 tool/configure_platforms.py
+          flutter pub get
+          dart run flutter_launcher_icons
+      - name: Build unsigned iOS application
+        run: |
+          flutter build ios --release --no-codesign
+          mkdir -p ios-release
+          ditto -c -k --sequesterRsrc --keepParent build/ios/iphoneos/Runner.app ios-release/AroFi-Support-iOS-unsigned-v1.0.0.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-unsigned
+          path: ios-release/*
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [android, ios]
+    if: ${{ always() && needs.android.result == 'success' }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-release
+          path: release
+      - name: Download iOS artifact when available
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-unsigned
+          path: ios-release
+      - name: Publish v1.0.0
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: AroFi Support v1.0.0
+          body: |
+            First AroFi Support agent app release.
+
+            Android APK is directly installable for testing. The AAB is prepared for the Play Store build pipeline; production Play signing should use the AroFi upload key through repository secrets.
+
+            The iOS artifact, when present, is an unsigned CI build for validation. A distributable IPA/TestFlight/App Store build requires Apple Developer signing credentials.
+          files: |
+            release/*
+            ios-release/*
+          fail_on_unmatched_files: false
