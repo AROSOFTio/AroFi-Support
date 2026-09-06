@@ -1,0 +1,56 @@
+name: arofi_support
+description: AroFi Support agent inbox for live customer and business support.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  dio: ^5.8.0+1
+  dio_cookie_manager: ^3.2.0
+  cookie_jar: ^4.0.8
+  path_provider: ^2.1.5
+  file_picker: ^10.3.2
+  record: ^6.1.2
+  just_audio: ^0.10.5
+  flutter_linkify: ^6.0.0
+  url_launcher: ^6.3.2
+  open_filex: ^4.7.0
+  intl: ^0.20.2
+  http_parser: ^4.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/arofi_app_icon.png
+
+flutter_launcher_icons:
+  android: launcher_icon
+  ios: true
+  image_path: assets/arofi_app_icon.png
+  min_sdk_android: 23
+  remove_alpha_ios: true
+  adaptive_icon_background: '#FFFFFF'
+  adaptive_icon_foreground: assets/arofi_app_icon.png
+  web:
+    generate: true
+    image_path: assets/arofi_app_icon.png
+    background_color: '#FFFFFF'
+    theme_color: '#22A53A'
+  windows:
+    generate: true
+    image_path: assets/arofi_app_icon.png
+    icon_size: 256
+  macos:
+    generate: true
+    image_path: assets/arofi_app_icon.png
