@@ -21,6 +21,10 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: Fetch exact AroFi brand icon
+        run: |
+          mkdir -p assets
+          curl -fsSL https://arofi.net/brand-assets/arofi-app-icon.png -o assets/arofi_app_icon.png
       - name: Generate Android platform and branding
         run: |
           flutter create . --platforms=android --project-name arofi_support --org com.arosoftlabs
@@ -52,6 +56,10 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: Fetch exact AroFi brand icon
+        run: |
+          mkdir -p assets
+          curl -fsSL https://arofi.net/brand-assets/arofi-app-icon.png -o assets/arofi_app_icon.png
       - name: Generate iOS project and branding
         run: |
           flutter create . --platforms=ios --project-name arofi_support --org com.arosoftlabs
