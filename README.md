@@ -2,12 +2,11 @@
 
 Official Flutter agent/support app for AroFi. It connects directly to the existing AroFi production API and shares the same support tickets, live chats, staff assignments and message history as the web console.
 
-## Mobile platforms
+## Platforms
 
-- Android (APK + Play Store AAB)
-- iPhone/iPad (iOS source and CI-ready project; App Store/TestFlight signing requires Apple Developer credentials)
-
-The same Flutter codebase is structured for future desktop distribution as well.
+- Android — universal APK, split APKs and Google Play AAB
+- iPhone/iPad — shared Flutter app; App Store/TestFlight signing requires Apple Developer credentials
+- Windows, macOS, Linux and Web/PWA — supported by the same Flutter source and platform bootstrap
 
 ## Features
 
@@ -26,6 +25,14 @@ The same Flutter codebase is structured for future desktop distribution as well.
 
 The app intentionally uses `https://arofi.net/api` so no separate support database is created.
 
+## Application identifiers
+
+Android package ID: `com.arofi.support`
+
+iOS bundle ID: `com.arofi.support`
+
+These identifiers were finalized before the first public release, so future Play Store/App Store updates must keep them unchanged.
+
 ## Development
 
 ```bash
@@ -37,10 +44,6 @@ flutter run
 
 ## Release
 
-Android package ID: `com.arosoftlabs.arofi.support`
+Version 1.0.0 release artifacts include a directly installable universal Android APK, architecture-specific APKs and a Play Store AAB. Production Android signing uses the private AroFi Support upload key and must never be committed to GitHub.
 
-iOS bundle ID: `com.arosoftlabs.arofi.support`
-
-The GitHub release workflow builds a directly installable Android APK and Play Store AAB. A Play Store production upload key is intentionally supplied through repository secrets rather than committed.
-
-For iOS, the codebase is shared with Android. A signed `.ipa` / TestFlight/App Store release requires Apple Developer signing credentials and App Store Connect setup.
+For iOS, a signed `.ipa` / TestFlight / App Store release requires Apple Developer signing credentials and App Store Connect setup.

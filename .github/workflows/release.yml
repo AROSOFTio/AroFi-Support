@@ -25,9 +25,9 @@ jobs:
         run: |
           mkdir -p assets
           curl -fsSL https://arofi.net/brand-assets/arofi-app-icon.png -o assets/arofi_app_icon.png
-      - name: Generate Android and iOS platform shells and branding
+      - name: Generate mobile platform shells and branding
         run: |
-          flutter create . --platforms=android,ios --project-name arofi_support --org com.arosoftlabs
+          flutter create . --platforms=android,ios --project-name arofi_support --org com.arofi
           python3 tool/configure_platforms.py
           flutter pub get
           dart run flutter_launcher_icons
@@ -35,13 +35,17 @@ jobs:
         run: |
           flutter analyze
           flutter test
-      - name: Build Android APK and AAB
+      - name: Build Android release files
         run: |
           flutter build apk --release
-          flutter build appbundle --release
           mkdir -p release
-          cp build/app/outputs/flutter-apk/app-release.apk release/AroFi-Support-Android-v1.0.0.apk
-          cp build/app/outputs/bundle/release/app-release.aab release/AroFi-Support-PlayStore-v1.0.0.aab
+          cp build/app/outputs/flutter-apk/app-release.apk release/AroFi-Support-v1.0.0-universal.apk
+          flutter build apk --release --split-per-abi
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk release/AroFi-Support-v1.0.0-armeabi-v7a.apk
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk release/AroFi-Support-v1.0.0-arm64-v8a.apk
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk release/AroFi-Support-v1.0.0-x86_64.apk
+          flutter build appbundle --release
+          cp build/app/outputs/bundle/release/app-release.aab release/AroFi-Support-v1.0.0.aab
       - uses: actions/upload-artifact@v4
         with:
           name: android-release
@@ -60,13 +64,13 @@ jobs:
         run: |
           mkdir -p assets
           curl -fsSL https://arofi.net/brand-assets/arofi-app-icon.png -o assets/arofi_app_icon.png
-      - name: Generate Android and iOS platform shells and branding
+      - name: Generate mobile platform shells and branding
         run: |
-          flutter create . --platforms=android,ios --project-name arofi_support --org com.arosoftlabs
+          flutter create . --platforms=android,ios --project-name arofi_support --org com.arofi
           python3 tool/configure_platforms.py
           flutter pub get
           dart run flutter_launcher_icons
-      - name: Build unsigned iOS application
+      - name: Build unsigned iOS validation application
         run: |
           flutter build ios --release --no-codesign
           mkdir -p ios-release
@@ -97,11 +101,11 @@ jobs:
           tag_name: v1.0.0
           name: AroFi Support v1.0.0
           body: |
-            First AroFi Support agent app release.
+            First AroFi Support agent application release.
 
-            Android APK is directly installable for testing. The AAB is prepared for the Play Store build pipeline; production Play signing should use the AroFi upload key through repository secrets.
+            Android includes a universal APK, architecture-specific APKs and an Android App Bundle. Production Play Store signing should use the permanent AroFi Support upload key.
 
-            The iOS artifact, when present, is an unsigned CI build for validation. A distributable IPA/TestFlight/App Store build requires Apple Developer signing credentials.
+            iOS artifacts from CI are unsigned validation builds until Apple Developer signing is configured.
           files: |
             release/*
             ios-release/*
